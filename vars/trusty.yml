@@ -39,6 +39,7 @@ apt_packages:
   - suckless-tools
   - compton
   - hsetroot
+  - i3
 
   # xcape reqs
   - libxtst-dev
