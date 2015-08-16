@@ -37,11 +37,13 @@
     - name: Install i3 keyring
       apt: pkg=sur5r-keyring
            force=yes
+      register: i3_keyring
       tags:
         - apt_repos
 
     - name: Update apt-cache
       apt: update_cache=yes
+      when: i3_keyring|changed
       tags:
         - apt_repos
 
