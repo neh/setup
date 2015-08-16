@@ -1,0 +1,66 @@
+---
+apt_packages:
+  - rxvt-unicode-256color
+  - fonts-inconsolata
+  - vim-gnome
+  - tmux
+  - zsh
+  - git
+  - sshpass
+  - silversearcher-ag
+  - curl
+  - exuberant-ctags
+  - jq
+
+  - build-essential
+  - dh-autoreconf
+  - cmake
+
+  #neovim
+  - xsel
+  - neovim
+
+  # xmonad session
+  - xmonad
+  - darcs
+  - gnome-panel
+  # xmonad compilation reqs
+  - libghc-xmonad-dev
+  - libghc-xmonad-contrib-dev
+  - libxml2-dev
+  - libyaml-dev
+  - cabal-install
+  # xmonad-log-applet compilation reqs
+  # ./configure --with-panel=gnome3
+  - libglib2.0-dev
+  - libdbus-glib-1-dev
+  - libpanel-applet-dev
+  # xmonad related tools
+  - suckless-tools
+  - compton
+  - gnome-session-xmonad
+  - hsetroot
+
+  # xcape reqs
+  - libxtst-dev
+  - libxi-dev
+
+  - gnome-tweak-tool
+  - wmctrl
+  - synapse
+  - feh
+  - htop
+  - mplayer2
+  - rox-filer
+  - python-pip
+  - python-dev
+  - openvpn
+
+  - chromium-browser
+  - scudcloud
+  - telegram
+
+  # logitech unifying receiver manager
+  # - solaar
+
+  - virtualbox-5.0

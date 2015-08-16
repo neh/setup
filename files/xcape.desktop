@@ -1,0 +1,10 @@
+[Desktop Entry]
+Type=Application
+Exec=/home/nathan/bin/xcape
+Hidden=false
+NoDisplay=false
+X-GNOME-Autostart-enabled=true
+Name[en_CA]=xcape
+Name=xcape
+Comment[en_CA]=
+Comment=

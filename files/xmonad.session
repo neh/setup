@@ -1,0 +1,4 @@
+[GNOME Session]
+Name=Xmonad/GNOME
+RequiredComponents=unity-settings-daemon;gnome-panel;xmonad
+DesktopName=Unity

@@ -1,0 +1,301 @@
+---
+- hosts: desktops:&{{ limit_hosts | default('all') }}
+  sudo: yes
+  # remote_user: "{{ remote_user | default(ansible_user_name) }}"
+
+  tags:
+    - desktop
+
+  vars:
+    ansible_user_name: nathan
+
+  vars_files:
+    - "vars/{{ ansible_distribution_release }}.yml"
+
+  tasks:
+    - name: Add apt keys
+      apt_key: url="{{item}}"
+               state=present
+      with_items:
+        - 'https://www.virtualbox.org/download/oracle_vbox.asc'
+
+    - name: Add apt repositories
+      apt_repository: repo="{{item}}"
+                      state=present
+                      update_cache=yes
+      with_items:
+        - 'ppa:neovim-ppa/unstable'
+        - 'ppa:synapse-core/ppa'
+        - 'deb http://download.virtualbox.org/virtualbox/debian {{ ansible_distribution_release }} contrib'
+        - 'ppa:rael-gc/scudcloud'
+        - 'ppa:atareao/telegram'
+        - 'deb http://debian.sur5r.net/i3/ {{ ansible_distribution_release }} universe'
+        # - 'ppa:daniel.pavel/solaar'
+      tags:
+        - apt_repos
+
+    - name: Install i3 keyring
+      apt: pkg=sur5r-keyring
+           force=yes
+      tags:
+        - apt_repos
+
+    - name: Update apt-cache
+      apt: update_cache=yes
+      tags:
+        - apt_repos
+
+    - name: Install apt packages
+      apt: pkg={{ item }}
+           state=installed
+      with_items: apt_packages
+
+    - name: Install pip packages
+      pip: name={{ item }}
+           state=present
+      with_items:
+        - ansible
+        - netaddr
+        - neovim
+
+        # TODO
+    #- name: Install vagrant
+
+    - name: Divert scudcloud icon
+      command: dpkg-divert --add --rename --divert /opt/scudcloud/resources/scudcloud.png.real /opt/scudcloud/resources/scudcloud.png
+      args:
+        creates: /opt/scudcloud/resources/scudcloud.png.real
+      tags:
+        - sicon
+
+    - name: Replace scudcloud icon
+      copy: src=files/scudcloud.png
+            dest=/opt/scudcloud/resources/scudcloud.png
+            owner=root
+            group=root
+            mode=0644
+      tags:
+        - sicon
+
+    - include: vivid.yml
+      when: ansible_distribution_release == 'vivid'
+
+
+
+- hosts: desktops:&{{ limit_hosts | default('all') }}
+  sudo: no
+  # remote_user: "{{ remote_user | default(ansible_user_name) }}"
+
+  tags:
+    - desktop_setup
+
+  vars:
+    rebuild_xmonad: no
+    xmonad_build_cmds:
+      - "runhaskell Setup.lhs clean"
+      - "runhaskell Setup.lhs configure --prefix={{ ansible_env.HOME }} --user"
+      - "runhaskell Setup.lhs build"
+      - "runhaskell Setup.lhs install --user"
+
+    dotfiles_links:
+      - src: gitconfig
+        dest: .gitconfig
+      - src: gitexcludes
+        dest: .gitexcludes
+
+      - src: screenrc
+        dest: .screenrc
+      - src: tmux.conf
+        dest: .tmux.conf
+
+      - src: zsh/zshrc
+        dest: .zshrc
+      - src: zsh/zshenv
+        dest: .zshenv
+      - src: zsh/zsh
+        dest: .zsh
+      - src: zsh/oh-my-zsh
+        dest: .oh-my-zsh
+
+      - src: terminfo
+        dest: .terminfo
+
+      - src: vim/vimrc
+        dest: .vimrc
+      - src: vim/vim
+        dest: .vim
+      - src: vim/vimrc
+        dest: .nvimrc
+      - src: vim/vim
+        dest: .nvim
+
+      - src: ssh.config
+        dest: .ssh/config
+
+      - src: xmonad/xmonad.hs
+        dest: .xmonad/xmonad.hs
+
+      - src: i3/config
+        dest: .config/i3/config
+      - src: i3/i3status.conf
+        dest: .i3status.conf
+      - src: i3/dunstrc
+        dest: .config/dunst/dunstrc
+
+      - src: terminfo
+        dest: .terminfo
+
+      - src: Xresources
+        dest: .Xresources
+      - src: Xresources
+        dest: .Xdefaults
+
+  tasks:
+    # - name: Clone dotfiles repo
+    #   git: repo=git://github.com/neh/myconfig.git
+    #        dest=/home/nathan/myconfig
+    #        accept_hostkey=yes
+    #   tags:
+    #     - dotfiles
+
+    - name: Ensure necessary dirs exist
+      file: path=/home/nathan/{{ item }}
+            state=directory
+            owner=nathan
+            group=nathan
+            mode=0755
+      with_items:
+        - .xmonad
+        - bin
+        - src
+        - .config/autostart
+        - .config/i3
+        - .config/dunst
+      tags:
+        - dotfiles
+
+    - name: Link dotfiles
+      file: src=/home/nathan/myconfig/{{ item.src }}
+            dest=/home/nathan/{{ item.dest }}
+            state=link
+            force=yes
+      with_items: dotfiles_links
+      tags:
+        - dotfiles
+
+
+    - name: Copy autostart files
+      copy: src=files/{{ item }}.desktop
+            dest=/home/nathan/.config/autostart/{{ item }}.desktop
+            owner=nathan
+            group=nathan
+            mode=0664
+      with_items:
+        - xcape
+        - compton
+
+
+    - name: Check for keybindings for less
+      stat: path=/home/nathan/myconfig/lesskey
+      register: lesskey_stat
+
+    - name: Set keybindings for less
+      command: lesskey myconfig/lesskey
+               chdir=/home/nathan
+      when: lesskey_stat.stat.exists
+      changed_when: false
+
+
+    - name: Build xcape
+      command: make
+               chdir=/home/nathan/myconfig/xcape
+               creates=/home/nathan/myconfig/xcape/xcape
+
+    - name: Link xcape binary
+      file: src=/home/nathan/myconfig/xcape/xcape
+            dest=/home/nathan/bin/xcape
+            state=link
+
+
+    - name: Install cabal packages
+      shell: cabal update && cabal install regex-posix dbus setlocale
+             creates={{ lookup('env', 'HOME') }}/.cabal/packages/hackage.haskell.org/dbus
+
+    - name: Check for xmonad source
+      stat: path={{ ansible_env.HOME }}/src/xmonad
+      register: xmonad_source
+      tags:
+        - xmonad_build
+
+    - name: Build xmonad
+      command: "{{ item }}"
+      args:
+        chdir: "{{ ansible_env.HOME }}/src/xmonad"
+        creates: "{{ ansible_env.HOME }}/bin/xmonad"
+      when: xmonad_source.stat.exists or rebuild_xmonad
+      with_items: xmonad_build_cmds
+      tags:
+        - xmonad_build
+
+    - name: Build xmonad-contrib
+      command: "{{ item }}"
+      args:
+        chdir: "{{ ansible_env.HOME }}/src/XMonadContrib"
+        creates: "{{ ansible_env.HOME }}/lib/xmonad-contrib-0.12"
+      when: xmonad_source.stat.exists or rebuild_xmonad
+      with_items: xmonad_build_cmds
+      tags:
+        - xmonad_build
+
+    - name: Clone xmonad-log-applet repo
+      git: repo=git@github.com/neh/xmonad-log-applet.git
+           dest=/home/nathan/src/xmonad-log-applet
+           version=gnome4
+           accept_hostkey=yes
+
+    - name: Build xmonad-log-applet
+      command: "{{ item }}"
+      args:
+        chdir: /home/nathan/src/xmonad-log-applet
+        creates: /home/nathan/src/xmonad-log-applet/xmonad-log-applet
+      register: xmonad_log_applet_build
+      with_items:
+        - "./autogen.sh --with-panel=gnome4"
+        - "./configure --with-panel=gnome4"
+        - "make"
+
+    - name: Install xmonad-log-applet
+      sudo: yes
+      command: "make install"
+      args:
+        chdir: /home/nathan/src/xmonad-log-applet
+      when: xmonad_log_applet_build|changed
+
+
+    - name: Set shell
+      sudo: yes
+      user: name=nathan
+            shell=/usr/bin/zsh
+
+
+    - name: Install vundle
+      git: repo=https://github.com/gmarik/vundle.git
+           dest=/home/nathan/.vim/bundle/vundle
+
+    - name: Clean bundles
+      command: vim --noplugin -u /home/nathan/.vim/bundles.vim +BundleClean! +qall chdir=/home/nathan
+      register: clean_out
+      changed_when: "'Removing bundles' in clean_out.stdout"
+
+    - name: Install bundles
+      command: vim --noplugin -u /home/nathan/.vim/bundles.vim +BundleInstall +qall chdir=/home/nathan
+      register: install_out
+      changed_when: "'\\r\\n+' in install_out.stdout"
+
+    - name: Compile YouCompleteMe
+      command: ./install.sh --clang-completer
+      args:
+        chdir: /home/nathan/.vim/bundle/YouCompleteMe
+        creates: /home/nathan/.vim/bundle/YouCompleteMe/third_party/ycmd/ycm_core.so
+      tags:
+        - ycm
