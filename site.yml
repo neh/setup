@@ -49,6 +49,8 @@
       apt: pkg={{ item }}
            state=installed
       with_items: apt_packages
+      tags:
+        - packages
 
     - name: Install pip packages
       pip: name={{ item }}
@@ -57,6 +59,8 @@
         - ansible
         - netaddr
         - neovim
+      tags:
+        - packages
 
         # TODO
     #- name: Install vagrant
