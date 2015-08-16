@@ -41,6 +41,7 @@ apt_packages:
   - gnome-session-xmonad
   - hsetroot
   - i3
+  - xautolock
 
   # xcape reqs
   - libxtst-dev
