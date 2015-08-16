@@ -1,0 +1,56 @@
+---
+- name: Install cabal packages
+  shell: cabal update && cabal install regex-posix dbus setlocale
+         creates={{ lookup('env', 'HOME') }}/.cabal/packages/hackage.haskell.org/dbus
+
+- name: Check for xmonad source
+  stat: path={{ ansible_env.HOME }}/src/xmonad
+  register: xmonad_source
+  tags:
+    - xmonad_build
+
+- name: Build xmonad
+  command: "{{ item }}"
+  args:
+    chdir: "{{ ansible_env.HOME }}/src/xmonad"
+    creates: "{{ ansible_env.HOME }}/bin/xmonad"
+  when: xmonad_source.stat.exists or rebuild_xmonad
+  with_items: xmonad_build_cmds
+  tags:
+    - xmonad_build
+
+- name: Build xmonad-contrib
+  command: "{{ item }}"
+  args:
+    chdir: "{{ ansible_env.HOME }}/src/XMonadContrib"
+    creates: "{{ ansible_env.HOME }}/lib/xmonad-contrib-0.12"
+  when: xmonad_source.stat.exists or rebuild_xmonad
+  with_items: xmonad_build_cmds
+  tags:
+    - xmonad_build
+
+- name: Clone xmonad-log-applet repo
+  git: repo=git@github.com/neh/xmonad-log-applet.git
+        dest=/home/nathan/src/xmonad-log-applet
+        version=gnome4
+        accept_hostkey=yes
+
+- name: Build xmonad-log-applet
+  command: "{{ item }}"
+  args:
+    chdir: /home/nathan/src/xmonad-log-applet
+    creates: /home/nathan/src/xmonad-log-applet/xmonad-log-applet
+  register: xmonad_log_applet_build
+  with_items:
+    - "./autogen.sh --with-panel=gnome4"
+    - "./configure --with-panel=gnome4"
+    - "make"
+
+- name: Install xmonad-log-applet
+  sudo: yes
+  command: "make install"
+  args:
+    chdir: /home/nathan/src/xmonad-log-applet
+  when: xmonad_log_applet_build|changed
+
+
