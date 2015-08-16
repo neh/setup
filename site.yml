@@ -84,6 +84,12 @@
     - include: vivid.yml
       when: ansible_distribution_release == 'vivid'
 
+    - name: Allow suspending without a password
+      lineinfile: dest=/etc/sudoers
+                  state=present
+                  line="nathan ALL=(ALL) NOPASSWD:/usr/sbin/pm-suspend"
+                  validate="visudo -cf %s"
+
 
 
 - hosts: desktops:&{{ limit_hosts | default('all') }}
