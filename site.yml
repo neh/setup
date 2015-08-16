@@ -121,6 +121,9 @@
       - src: zsh/oh-my-zsh
         dest: .oh-my-zsh
 
+      - src: profile
+        dest: .profile
+
       - src: terminfo
         dest: .terminfo
 
