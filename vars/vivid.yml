@@ -43,6 +43,7 @@ apt_packages:
   - i3
   - xautolock
   - xbacklight
+  - xdotool
 
   # xcape reqs
   - libxtst-dev
