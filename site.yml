@@ -262,3 +262,11 @@
         creates: /home/nathan/.vim/bundle/YouCompleteMe/third_party/ycmd/ycm_core.so
       tags:
         - ycm
+
+    - name: Compile ctrlp-cmatcher
+      command: ./install.sh
+      args:
+        chdir: /home/nathan/.vim/bundle/ctrlp-cmatcher
+        creates: /home/nathan/.vim/bundle/ctrlp-cmatcher/autoload/fuzzycomt.so
+      tags:
+        - ctrlp
