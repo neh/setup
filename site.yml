@@ -231,6 +231,23 @@
             dest=/home/nathan/bin/xcape
             state=link
 
+    - name: Get autorandr git repo
+      git: repo=https://github.com/phillipberndt/autorandr.git
+           dest=/home/nathan/src/autorandr
+      tags:
+        - autorandr
+
+    - name: Install autorandr
+      sudo: yes
+      command: "{{ item }}"
+      args:
+        chdir: "/home/nathan/src/autorandr"
+      with_items:
+        - "make install"
+        - "make hotplug"
+      tags:
+        - autorandr
+
     - include: xmonad.yml
       tags:
         - xmonad
