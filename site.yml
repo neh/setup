@@ -92,6 +92,23 @@
                   line="nathan ALL=(ALL) NOPASSWD:/usr/sbin/pm-suspend"
                   validate="visudo -cf %s"
 
+    - name: Set some default apps
+      alternatives: name="{{ item.name }}"
+                    path="{{ item.path }}"
+
+      with_items:
+        - name: x-www-browser
+          path: /usr/bin/chromium-browser
+
+        - name: editor
+          path: /usr/bin/nvim
+
+        - name: x-terminal-emulator
+          path: /usr/bin/urxvtcd
+
+      tags:
+        - default_apps
+
 
 
 - hosts: desktops:&{{ limit_hosts | default('all') }}
