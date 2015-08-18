@@ -41,6 +41,7 @@ apt_packages:
   - hsetroot
   - i3
   - xautolock
+  - xbacklight
 
   # xcape reqs
   - libxtst-dev
