@@ -164,9 +164,6 @@
       - src: ssh.config
         dest: .ssh/config
 
-      - src: xmonad/xmonad.hs
-        dest: .xmonad/xmonad.hs
-
       - src: i3/config
         dest: .config/i3/config
       - src: i3/i3status.conf
@@ -197,7 +194,6 @@
             group=nathan
             mode=0755
       with_items:
-        - .xmonad
         - bin
         - src
         - .config/autostart
@@ -265,9 +261,6 @@
       tags:
         - autorandr
 
-    - include: xmonad.yml
-      tags:
-        - xmonad
 
     - name: Set shell
       sudo: yes
