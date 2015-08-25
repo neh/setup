@@ -273,32 +273,6 @@
             shell=/usr/bin/zsh
 
 
-    - name: Install vundle
-      git: repo=https://github.com/gmarik/vundle.git
-           dest=/home/nathan/.vim/bundle/vundle
-
-    - name: Clean bundles
-      command: vim --noplugin -u /home/nathan/.vim/bundles.vim +BundleClean! +qall chdir=/home/nathan
-      register: clean_out
-      changed_when: "'Removing bundles' in clean_out.stdout"
-
-    - name: Install bundles
-      command: vim --noplugin -u /home/nathan/.vim/bundles.vim +BundleInstall +qall chdir=/home/nathan
-      register: install_out
-      changed_when: "'\\r\\n+' in install_out.stdout"
-
-    - name: Compile YouCompleteMe
-      command: ./install.sh --clang-completer
-      args:
-        chdir: /home/nathan/.vim/bundle/YouCompleteMe
-        creates: /home/nathan/.vim/bundle/YouCompleteMe/third_party/ycmd/ycm_core.so
-      tags:
-        - ycm
-
-    - name: Compile ctrlp-cmatcher
-      command: ./install.sh
-      args:
-        chdir: /home/nathan/.vim/bundle/ctrlp-cmatcher
-        creates: /home/nathan/.vim/bundle/ctrlp-cmatcher/autoload/fuzzycomt.so
-      tags:
-        - ctrlp
+    - name: Install vim plugins
+      command: nvim +BundleInstall +qall
+               chdir=/home/nathan
