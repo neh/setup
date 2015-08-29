@@ -149,9 +149,6 @@
       - src: profile
         dest: .profile
 
-      - src: terminfo
-        dest: .terminfo
-
       - src: vim/vimrc
         dest: .vimrc
       - src: vim/vim
