@@ -22,7 +22,6 @@ apt_packages:
 
   - suckless-tools
   - compton
-  - gnome-session-xmonad
   - hsetroot
   - i3
   - xautolock
