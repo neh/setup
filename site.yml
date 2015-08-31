@@ -171,6 +171,8 @@
         dest: .config/i3blocks/config
       - src: i3/blocks
         dest: bin/blocks
+      - src: i3/acpi_listener
+        dest: bin/acpi_listener
 
       - src: terminfo
         dest: .terminfo
