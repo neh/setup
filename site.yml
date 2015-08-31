@@ -167,6 +167,10 @@
         dest: .i3status.conf
       - src: i3/dunstrc
         dest: .config/dunst/dunstrc
+      - src: i3/i3blocks.conf
+        dest: .config/i3blocks/config
+      - src: i3/blocks
+        dest: bin/blocks
 
       - src: terminfo
         dest: .terminfo
@@ -196,6 +200,7 @@
         - .config/autostart
         - .config/i3
         - .config/dunst
+        - .config/i3blocks
       tags:
         - dotfiles
 
@@ -262,6 +267,34 @@
         - "make hotplug"
       tags:
         - autorandr
+
+
+    - name: Get i3blocks git repo
+      git: repo=git://github.com/vivien/i3blocks
+           dest=/home/nathan/src/i3blocks
+           accept_hostkey=yes
+      register: i3blocks_repo
+      tags:
+        - i3
+        - i3blocks
+
+    - name: Build i3blocks
+      command: make clean all
+      args:
+        chdir: /home/nathan/src/i3blocks
+      register: i3blocks_build
+      when: i3blocks_repo | changed
+      tags:
+        - i3
+        - i3blocks
+
+    - name: Link i3blocks binary
+      file: src=/home/nathan/src/i3blocks/i3blocks
+            dest=/home/nathan/bin/i3blocks
+            state=link
+      tags:
+        - i3
+        - i3blocks
 
 
     - name: Set shell
