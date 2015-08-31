@@ -27,6 +27,7 @@ apt_packages:
   - xautolock
   - xbacklight
   - xdotool
+  - fonts-font-awesome
 
   # xcape reqs
   - libxtst-dev
