@@ -28,6 +28,7 @@ apt_packages:
   - xbacklight
   - xdotool
   - fonts-font-awesome
+  - acpi
 
   # xcape reqs
   - libxtst-dev
