@@ -27,6 +27,8 @@ apt_packages:
   - xautolock
   - xbacklight
   - xdotool
+  - acpi
+  - xclip
 
   # xcape reqs
   - libxtst-dev

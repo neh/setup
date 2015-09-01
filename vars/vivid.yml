@@ -29,6 +29,7 @@ apt_packages:
   - xdotool
   - fonts-font-awesome
   - acpi
+  - xclip
 
   # xcape reqs
   - libxtst-dev
