@@ -18,6 +18,15 @@
                state=present
       with_items:
         - 'https://www.virtualbox.org/download/oracle_vbox.asc'
+      tags:
+        - apt_repos
+
+    - name: Add docker apt key
+      apt_key: url="https://apt.dockerproject.org/gpg"
+               id="2C52609D"
+               state=present
+      tags:
+        - apt_repos
 
     - name: Add apt repositories
       apt_repository: repo="{{item}}"
@@ -30,6 +39,7 @@
         - 'ppa:rael-gc/scudcloud'
         - 'ppa:atareao/telegram'
         - 'deb http://debian.sur5r.net/i3/ {{ ansible_distribution_release }} universe'
+        - 'deb https://apt.dockerproject.org/repo ubuntu-{{ ansible_distribution_release }} main'
         # - 'ppa:daniel.pavel/solaar'
       tags:
         - apt_repos

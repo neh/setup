@@ -12,6 +12,8 @@ apt_packages:
   - exuberant-ctags
   - jq
 
+  - docker-engine
+
   - build-essential
   - dh-autoreconf
   - cmake
