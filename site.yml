@@ -220,9 +220,18 @@
         - compton
 
 
-    - name: Make mouse cursor visible
+    - name: Desktop settings
       sudo: no
-      command: gsettings set org.gnome.settings-daemon.plugins.cursor active false
+      command: gsettings set {{ item }}
+      with_items:
+          # Make mouse cursor visible in non-gnome desktops
+        - org.gnome.settings-daemon.plugins.cursor active false
+          # Turn off nautilus desktop management
+        - org.gnome.desktop.background show-desktop-icons false
+          # Nautilus single click
+        - org.gnome.nautilus.preferences click-policy single
+          # Nautilus delete option
+        - org.gnome.nautilus.preferences enable-delete true
 
 
     - name: Check for keybindings for less
