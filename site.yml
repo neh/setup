@@ -112,21 +112,12 @@
     - desktop_setup
 
   vars:
-    rebuild_xmonad: no
-    xmonad_build_cmds:
-      - "runhaskell Setup.lhs clean"
-      - "runhaskell Setup.lhs configure --prefix={{ ansible_env.HOME }} --user"
-      - "runhaskell Setup.lhs build"
-      - "runhaskell Setup.lhs install --user"
-
     dotfiles_links:
       - src: gitconfig
         dest: .gitconfig
       - src: gitexcludes
         dest: .gitexcludes
 
-      - src: screenrc
-        dest: .screenrc
       - src: tmux.conf
         dest: .tmux.conf
 
