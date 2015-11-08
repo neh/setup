@@ -48,8 +48,6 @@ apt_packages:
   - openvpn
 
   - chromium-browser
-  - scudcloud
-  - telegram
 
   # logitech unifying receiver manager
   # - solaar

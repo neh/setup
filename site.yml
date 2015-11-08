@@ -36,8 +36,6 @@
         - 'ppa:neovim-ppa/unstable'
         - 'ppa:synapse-core/ppa'
         - 'deb http://download.virtualbox.org/virtualbox/debian {{ ansible_distribution_release }} contrib'
-        - 'ppa:rael-gc/scudcloud'
-        - 'ppa:atareao/telegram'
         - 'deb http://debian.sur5r.net/i3/ {{ ansible_distribution_release }} universe'
         - 'deb https://apt.dockerproject.org/repo ubuntu-{{ ansible_distribution_release }} main'
         # - 'ppa:daniel.pavel/solaar'
@@ -76,22 +74,6 @@
 
         # TODO
     #- name: Install vagrant
-
-    - name: Divert scudcloud icon
-      command: dpkg-divert --add --rename --divert /opt/scudcloud/resources/scudcloud.png.real /opt/scudcloud/resources/scudcloud.png
-      args:
-        creates: /opt/scudcloud/resources/scudcloud.png.real
-      tags:
-        - sicon
-
-    - name: Replace scudcloud icon
-      copy: src=files/scudcloud.png
-            dest=/opt/scudcloud/resources/scudcloud.png
-            owner=root
-            group=root
-            mode=0644
-      tags:
-        - sicon
 
     - include: vivid.yml
       when: ansible_distribution_release == 'vivid'
