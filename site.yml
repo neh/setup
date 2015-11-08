@@ -69,6 +69,7 @@
         - ansible
         - netaddr
         - neovim
+        - httpie
       tags:
         - packages
 
