@@ -146,10 +146,10 @@
         dest: .vimrc
       - src: vim/vim
         dest: .vim
-      - src: vim/vimrc
-        dest: .nvimrc
       - src: vim/vim
-        dest: .nvim
+        dest: .config/nvim
+      - src: vim/vimrc
+        dest: .config/nvim/init.vim
 
       - src: ssh.config
         dest: .ssh/config
